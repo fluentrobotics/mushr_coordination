@@ -129,7 +129,7 @@ class MushrCoordination {
   private:
     void solve() {
       m_planning = true;
-      std::cout << "start planning" << std::endl;
+      std::cout << "start planning - TA" << std::endl;
       std::unordered_set<Location> obstacles;
       std::vector<State> startStates;
       std::vector<State> oldStartStates;
@@ -163,6 +163,8 @@ class MushrCoordination {
       bool success = true;
       std::vector<int> startTime;
       std::vector<PlanResult<State, Action, int> > solution;
+
+      std::cout << "Planning Scene" << std::endl;
       std::cout << "x: " << dimx << ", y: " << dimy << ", agent: " << m_num_agent << ", task: "<< m_goal_pose.size() << ", waypoint: " << m_num_waypoint << std::endl;
 
       startTime.push_back(0);
@@ -173,6 +175,10 @@ class MushrCoordination {
           ls.emplace_back(-i - 1, -i - 1);
           goals.emplace_back(ls);
         }
+
+        //todo: choose which TA model to use here
+
+        //ECBS-TA
         Environment mapf(dimx, dimy, m_num_waypoint, obstacles, startStates, goals,
                       m_maxTaskAssignments);
         ECBSTA<State, Action, int, Conflict, Constraints, Waypoints,
@@ -250,6 +256,7 @@ class MushrCoordination {
             }
           }
         }
+        // goalmsg: goals[robot_ind].poses[goal_ind]
         m_pub_goals.publish(goalmsg);
         std::cout << "publish goals to clcbs" << std::endl;
       }
@@ -341,6 +348,9 @@ class MushrCoordination {
     }
 
     bool isReady() {
+      auto temp = m_assigned.size();
+      auto temp2 = m_num_agent && m_ini_obs && m_ini_goal && !m_planning;
+      auto res = m_assigned.size() == m_num_agent && m_ini_obs && m_ini_goal && !m_planning;
       return m_assigned.size() == m_num_agent && m_ini_obs && m_ini_goal && !m_planning;
     }
 

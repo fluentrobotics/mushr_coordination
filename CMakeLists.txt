@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
 )
 
+find_package(Eigen3 REQUIRED)
+
 find_package(Boost 1.58 REQUIRED COMPONENTS program_options)
 find_package(PkgConfig)
 pkg_check_modules(YamlCpp yaml-cpp)
@@ -45,6 +47,7 @@ catkin_package(
 include_directories(include 
   ${catkin_INCLUDE_DIRS}
   ${Boost_LIBRARIES}
+  ${Eigen_INCLUDE_DIR}
   libMultiRobotPlanning/include
   libMultiRobotPlanning/example
 )
@@ -52,6 +55,10 @@ include_directories(include
 add_executable(mushr_coordination src/nodes/mushr_coor_node.cpp include/mushr_coordination/mushr_coordination.hpp)
 target_link_libraries(mushr_coordination ${catkin_LIBRARIES})
 add_dependencies(mushr_coordination ${PROJECT_NAME}_generate_messages_cpp libMultiRobotPlanning/example/)
+
+add_executable(test_data_pub src/nodes/test_data_publisher.cpp)
+target_link_libraries(test_data_pub ${catkin_LIBRARIES} ${Eigen_LIBRARIES})
+
 
 catkin_install_python(PROGRAMS 
   src/init_planner.py
